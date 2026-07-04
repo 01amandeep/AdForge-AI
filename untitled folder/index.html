@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AdForge AI — Automate Your Advertising</title>
+  <meta name="description" content="AdForge AI is an intelligent advertisement automation platform. Describe your product to the AI agent and get instant multi-platform ad creatives, posters, and copy." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #05050d;
+      --bg-card: rgba(255,255,255,0.04);
+      --bg-card-hover: rgba(255,255,255,0.07);
+      --bg-input: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.08);
+      --border-glow: rgba(124,58,237,0.4);
+      --violet: #7c3aed;
+      --violet-light: #a855f7;
+      --violet-dim: rgba(124,58,237,0.15);
+      --cyan: #06b6d4;
+      --cyan-dim: rgba(6,182,212,0.15);
+      --pink: #ec4899;
+      --green: #10b981;
+      --text-primary: #f1f0ff;
+      --text-secondary: #a09ab8;
+      --text-muted: #5c5578;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow-glow: 0 0 40px rgba(124,58,237,0.25);
+      --shadow-card: 0 8px 32px rgba(0,0,0,0.4);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(124,58,237,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 110%, rgba(6,182,212,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(168,85,247,0.05) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+    .gradient-text {
+      background: linear-gradient(135deg, #a855f7, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 3px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+    .section { padding: 80px 0; }
+
+    /* NAV */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 16px 0;
+      background: rgba(5,5,13,0.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: var(--transition);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--violet), var(--cyan));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 20px rgba(124,58,237,0.5);
+    }
+    .nav-logo-text { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800; color: var(--text-primary); }
+    .nav-logo-text span { color: var(--violet-light); }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; transition: var(--transition); }
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--violet), var(--violet-light)) !important;
+      color: white !important; padding: 10px 22px; border-radius: 50px;
+      font-weight: 600 !important; box-shadow: 0 0 20px rgba(124,58,237,0.4);
+    }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding-top: 80px; position: relative; overflow: hidden;
+    }
+    .hero-bg-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3; pointer-events: none; }
+    .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, var(--violet), transparent); top: -200px; right: -200px; animation: orbFloat 8s ease-in-out infinite; }
+    .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, var(--cyan), transparent); bottom: -100px; left: -100px; animation: orbFloat 10s ease-in-out infinite reverse; }
+    @keyframes orbFloat { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(30px,-30px) scale(1.05); } }
+    .hero-content { position: relative; z-index: 1; text-align: center; max-width: 800px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; background: var(--violet-dim);
+      border: 1px solid rgba(124,58,237,0.3); border-radius: 50px;
+      font-size: 13px; font-weight: 500; color: var(--violet-light);
+      margin-bottom: 28px; animation: fadeSlideDown 0.6s ease forwards;
+    }
+    .hero-badge-dot { width: 8px; height: 8px; background: var(--violet-light); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(0.8); } }
+    .hero-title { font-size: clamp(48px,8vw,88px); font-weight: 900; line-height: 1.05; letter-spacing: -2px; margin-bottom: 24px; animation: fadeSlideDown 0.6s 0.1s ease both; }
+    .hero-subtitle { font-size: 18px; color: var(--text-secondary); line-height: 1.7; max-width: 600px; margin: 0 auto 40px; animation: fadeSlideDown 0.6s 0.2s ease both; }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; animation: fadeSlideDown 0.6s 0.3s ease both; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px;
+      background: linear-gradient(135deg, var(--violet), var(--violet-light));
+      color: white; text-decoration: none; border-radius: 50px;
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 600;
+      border: none; cursor: pointer;
+      box-shadow: 0 0 30px rgba(124,58,237,0.5), 0 4px 20px rgba(0,0,0,0.3);
+      transition: var(--transition);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(124,58,237,0.7), 0 8px 30px rgba(0,0,0,0.4); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px;
+      background: var(--bg-card); color: var(--text-primary); text-decoration: none;
+      border-radius: 50px; font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 600;
+      border: 1px solid var(--border); cursor: pointer;
+      backdrop-filter: blur(10px); transition: var(--transition);
+    }
+    .btn-secondary:hover { background: var(--bg-card-hover); border-color: rgba(124,58,237,0.4); transform: translateY(-2px); }
+    .platform-pills { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 60px; animation: fadeSlideDown 0.6s 0.5s ease both; }
+    .pill { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50px; font-size: 13px; font-weight: 500; color: var(--text-secondary); backdrop-filter: blur(10px); transition: var(--transition); }
+    .pill:hover { border-color: var(--border-glow); color: var(--text-primary); }
+    .pill-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .hero-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 60px; animation: fadeSlideDown 0.6s 0.6s ease both; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: center; backdrop-filter: blur(10px); transition: var(--transition); }
+    .stat-card:hover { border-color: var(--border-glow); background: var(--bg-card-hover); transform: translateY(-4px); }
+    .stat-number { font-family: 'Outfit', sans-serif; font-size: 36px; font-weight: 800; background: linear-gradient(135deg, var(--violet-light), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: block; margin-bottom: 4px; }
+    .stat-label { font-size: 13px; color: var(--text-muted); }
+    @keyframes fadeSlideDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+
+    /* FEATURES STRIP */
+    #features-strip { padding: 40px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.01); overflow: hidden; }
+    .features-scroll { display: flex; gap: 48px; animation: scrollLeft 30s linear infinite; white-space: nowrap; }
+    .feature-item { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--text-secondary); flex-shrink: 0; }
+    .feature-icon { color: var(--violet-light); font-size: 16px; }
+    @keyframes scrollLeft { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+
+    /* SECTION COMMON */
+    .section-header { text-align: center; margin-bottom: 56px; }
+    .section-tag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: var(--violet-dim); border: 1px solid rgba(124,58,237,0.3); border-radius: 50px; font-size: 12px; font-weight: 600; color: var(--violet-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+    .section-title { font-size: clamp(32px,5vw,52px); font-weight: 800; line-height: 1.1; letter-spacing: -1px; margin-bottom: 16px; }
+    .section-subtitle { font-size: 17px; color: var(--text-secondary); max-width: 560px; margin: 0 auto; line-height: 1.7; }
+
+    /* HOW IT WORKS */
+    #how-it-works { padding: 80px 0; }
+    .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; position: relative; }
+    .steps-grid::before { content: ''; position: absolute; top: 40px; left: 20%; right: 20%; height: 1px; background: linear-gradient(90deg, transparent, var(--violet), var(--cyan), transparent); }
+    .step-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 24px; text-align: center; backdrop-filter: blur(10px); transition: var(--transition); }
+    .step-card:hover { border-color: var(--border-glow); transform: translateY(-6px); box-shadow: var(--shadow-glow); }
+    .step-number { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--violet), var(--cyan)); display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: white; margin: 0 auto 20px; box-shadow: 0 0 25px rgba(124,58,237,0.4); }
+    .step-title { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+    .step-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+    /* AGENT */
+    #agent { padding: 80px 0; }
+    .agent-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+    .chat-window { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); backdrop-filter: blur(20px); overflow: hidden; box-shadow: var(--shadow-card), var(--shadow-glow); }
+    .chat-topbar { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--border); background: rgba(124,58,237,0.05); }
+    .agent-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, var(--violet), var(--cyan)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 0 15px rgba(124,58,237,0.4); }
+    .agent-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .agent-status-row { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--green); }
+    .status-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+    .chat-controls { display: flex; gap: 8px; margin-left: auto; }
+    .ctrl-btn { width: 32px; height: 32px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); color: var(--text-secondary); font-size: 14px; }
+    .ctrl-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+    .chat-messages { height: 420px; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth; }
+    .message { display: flex; gap: 10px; max-width: 90%; animation: messageIn 0.3s ease forwards; }
+    @keyframes messageIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .message.user { align-self: flex-end; flex-direction: row-reverse; }
+    .msg-avatar { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .msg-avatar.agent-av { background: linear-gradient(135deg, var(--violet), var(--cyan)); }
+    .msg-avatar.user-av { background: linear-gradient(135deg, #374151, #4b5563); }
+    .msg-bubble { padding: 12px 16px; border-radius: 14px; font-size: 14px; line-height: 1.6; max-width: 100%; }
+    .message.agent .msg-bubble { background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); color: var(--text-primary); border-radius: 4px 14px 14px 14px; }
+    .message.user .msg-bubble { background: linear-gradient(135deg, var(--violet), rgba(168,85,247,0.8)); color: white; border-radius: 14px 4px 14px 14px; }
+    .msg-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .message.agent .msg-time { text-align: left; }
+    .message.user .msg-time { text-align: right; }
+    .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 12px 16px; background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); border-radius: 4px 14px 14px 14px; width: fit-content; }
+    .typing-dot { width: 7px; height: 7px; background: var(--violet-light); border-radius: 50%; animation: typingBounce 1.4s infinite; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce { 0%,80%,100% { transform:translateY(0); opacity:0.4; } 40% { transform:translateY(-8px); opacity:1; } }
+    .chat-input-area { padding: 16px 20px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); }
+    .chat-suggestions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .suggestion-chip { padding: 6px 12px; background: var(--violet-dim); border: 1px solid rgba(124,58,237,0.3); border-radius: 50px; font-size: 12px; color: var(--violet-light); cursor: pointer; transition: var(--transition); white-space: nowrap; }
+    .suggestion-chip:hover { background: rgba(124,58,237,0.25); transform: translateY(-1px); }
+    .chat-input-row { display: flex; gap: 10px; align-items: flex-end; }
+    .chat-input { flex: 1; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px; resize: none; min-height: 48px; max-height: 120px; outline: none; transition: var(--transition); }
+    .chat-input:focus { border-color: var(--border-glow); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+    .chat-input::placeholder { color: var(--text-muted); }
+    .send-btn { width: 48px; height: 48px; background: linear-gradient(135deg, var(--violet), var(--violet-light)); border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; box-shadow: 0 0 15px rgba(124,58,237,0.4); transition: var(--transition); flex-shrink: 0; font-size: 20px; }
+    .send-btn:hover { transform: translateY(-2px); box-shadow: 0 0 25px rgba(124,58,237,0.6); }
+    .agent-info-panel { display: flex; flex-direction: column; gap: 20px; }
+    .capability-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; backdrop-filter: blur(10px); transition: var(--transition); }
+    .capability-card:hover { border-color: var(--border-glow); background: var(--bg-card-hover); transform: translateX(4px); }
+    .cap-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; font-size: 22px; }
+    .cap-icon.violet { background: var(--violet-dim); }
+    .cap-icon.cyan { background: var(--cyan-dim); }
+    .cap-icon.pink { background: rgba(236,72,153,0.1); }
+    .cap-title { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .cap-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* RESULTS */
+    #results { padding: 80px 0; display: none; }
+    #results.visible { display: block; }
+    .platform-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+    .tab-btn { display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50px; color: var(--text-secondary); font-size: 14px; font-weight: 500; cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; }
+    .tab-btn:hover, .tab-btn.active { background: var(--violet-dim); border-color: rgba(124,58,237,0.4); color: var(--violet-light); }
+    .tab-btn.active { box-shadow: 0 0 15px rgba(124,58,237,0.2); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: grid; }
+    .ads-grid { grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 24px; }
+    .ad-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; backdrop-filter: blur(10px); transition: var(--transition); }
+    .ad-card:hover { border-color: var(--border-glow); transform: translateY(-4px); box-shadow: var(--shadow-glow); }
+    .ad-card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .platform-label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
+    .platform-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .ad-format-badge { font-size: 11px; padding: 3px 10px; border-radius: 50px; background: var(--violet-dim); color: var(--violet-light); border: 1px solid rgba(124,58,237,0.3); font-weight: 600; }
+    .ad-poster { width: 100%; aspect-ratio: 1; position: relative; overflow: hidden; }
+    .ad-poster canvas { width: 100%; height: 100%; display: block; }
+    .ad-poster.landscape { aspect-ratio: 16/9; }
+    .ad-poster.portrait { aspect-ratio: 9/16; max-height: 300px; }
+    .ad-copy-section { padding: 20px; }
+    .ad-headline { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3; }
+    .ad-body { font-size: 13px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
+    .ad-cta-badge { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; background: linear-gradient(135deg, var(--violet), var(--violet-light)); border-radius: 50px; font-size: 12px; font-weight: 600; color: white; }
+    .ad-card-actions { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+    .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; }
+    .action-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); border-color: var(--border-glow); }
+    .action-btn.publish { background: var(--violet-dim); border-color: rgba(124,58,237,0.3); color: var(--violet-light); }
+    .action-btn.publish:hover { background: rgba(124,58,237,0.25); }
+
+    /* POSTER STUDIO */
+    #poster-studio { padding: 80px 0; display: none; }
+    #poster-studio.visible { display: block; }
+    .poster-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .poster-wrapper { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: var(--transition); }
+    .poster-wrapper:hover { border-color: var(--border-glow); transform: translateY(-4px); box-shadow: var(--shadow-glow); }
+    .poster-canvas-wrap { width: 100%; aspect-ratio: 1; background: #111; }
+    .poster-canvas-wrap canvas { width: 100%; height: 100%; display: block; }
+    .poster-footer { padding: 16px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .poster-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .download-btn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--violet-dim); border: 1px solid rgba(124,58,237,0.3); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--violet-light); cursor: pointer; transition: var(--transition); font-family: 'Inter', sans-serif; }
+    .download-btn:hover { background: rgba(124,58,237,0.25); transform: translateY(-1px); }
+
+    /* HISTORY */
+    #history { padding: 80px 0; }
+    .history-empty { text-align: center; padding: 60px; color: var(--text-muted); }
+    .history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 20px; }
+    .history-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; backdrop-filter: blur(10px); transition: var(--transition); }
+    .history-card:hover { border-color: var(--border-glow); background: var(--bg-card-hover); transform: translateY(-3px); }
+    .history-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+    .campaign-title { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-primary); flex: 1; margin-right: 12px; }
+    .campaign-time { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+    .campaign-platforms { display: flex; gap: 6px; flex-wrap: wrap; }
+    .platform-mini { display: flex; align-items: center; gap: 4px; padding: 3px 8px; background: var(--bg-input); border-radius: 50px; font-size: 11px; color: var(--text-muted); }
+    .campaign-reload { margin-top: 14px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; background: var(--violet-dim); border: 1px solid rgba(124,58,237,0.2); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--violet-light); cursor: pointer; transition: var(--transition); }
+    .campaign-reload:hover { background: rgba(124,58,237,0.25); }
+
+    /* TOAST */
+    .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+    .toast { display: flex; align-items: center; gap: 10px; padding: 14px 20px; background: rgba(20,15,35,0.95); border: 1px solid var(--border-glow); border-radius: var(--radius-sm); font-size: 14px; color: var(--text-primary); backdrop-filter: blur(20px); box-shadow: var(--shadow-glow); pointer-events: auto; animation: toastIn 0.3s ease forwards; }
+    .toast.success { border-color: rgba(16,185,129,0.4); }
+    @keyframes toastIn { from { opacity:0; transform:translateY(20px) scale(0.95); } to { opacity:1; transform:translateY(0) scale(1); } }
+    @keyframes toastOut { from { opacity:1; transform:translateY(0) scale(1); } to { opacity:0; transform:translateY(10px) scale(0.95); } }
+
+    /* GENERATING OVERLAY */
+    .generating-overlay { display: none; position: fixed; inset: 0; background: rgba(5,5,13,0.9); backdrop-filter: blur(10px); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 24px; }
+    .generating-overlay.active { display: flex; }
+    .gen-spinner { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--violet-light); border-right-color: var(--cyan); animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .gen-text { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 700; text-align: center; }
+    .gen-subtext { font-size: 14px; color: var(--text-muted); }
+    .gen-steps { display: flex; flex-direction: column; gap: 10px; min-width: 300px; }
+    .gen-step { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; color: var(--text-muted); transition: var(--transition); }
+    .gen-step.done { color: var(--green); border-color: rgba(16,185,129,0.3); }
+    .gen-step.active { color: var(--violet-light); border-color: rgba(124,58,237,0.4); }
+
+    /* FOOTER */
+    footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: center; }
+    .footer-text { font-size: 13px; color: var(--text-muted); }
+    .footer-text span { color: var(--violet-light); }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .agent-layout { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .steps-grid::before { display: none; }
+      .poster-grid { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 600px) {
+      .poster-grid { grid-template-columns: 1fr; }
+      .hero-stats { grid-template-columns: 1fr; }
+      .ads-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo">
+          <div class="nav-logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          </div>
+          <span class="nav-logo-text">Ad<span>Forge</span> AI</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#agent">AI Agent</a></li>
+          <li><a href="#results">Campaigns</a></li>
+          <li><a href="#history">History</a></li>
+          <li><a href="login.html">Log In</a></li>
+          <li><a href="signup.html" class="nav-cta">Sign Up Free &rarr;</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg-orb orb-1"></div>
+    <div class="hero-bg-orb orb-2"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <div class="hero-badge-dot"></div>
+          AI-Powered Advertising Platform
+        </div>
+        <h1 class="hero-title">
+          Your AI Agent<br/>
+          <span class="gradient-text">Creates &amp; Deploys</span><br/>
+          Ads Automatically
+        </h1>
+        <p class="hero-subtitle">
+          Describe your product or service in plain language. AdForge AI generates stunning ad creatives,
+          platform-specific copy, and visual posters &mdash; instantly.
+        </p>
+        <div class="hero-actions">
+          <a href="#agent" class="btn-primary">
+            &#129302; Start with AI Agent
+          </a>
+          <a href="#how-it-works" class="btn-secondary">
+            &#9654; See How It Works
+          </a>
+        </div>
+        <div class="platform-pills">
+          <div class="pill"><div class="pill-dot" style="background:#E1306C;"></div> Instagram</div>
+          <div class="pill"><div class="pill-dot" style="background:#1877F2;"></div> Facebook</div>
+          <div class="pill"><div class="pill-dot" style="background:#000000;"></div> Twitter / X</div>
+          <div class="pill"><div class="pill-dot" style="background:#0A66C2;"></div> LinkedIn</div>
+          <div class="pill"><div class="pill-dot" style="background:#4285F4;"></div> Google Ads</div>
+          <div class="pill"><div class="pill-dot" style="background:#FF0000;"></div> YouTube</div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card"><span class="stat-number">6+</span><div class="stat-label">Platforms Supported</div></div>
+          <div class="stat-card"><span class="stat-number">10s</span><div class="stat-label">Ad Generation Time</div></div>
+          <div class="stat-card"><span class="stat-number">&infin;</span><div class="stat-label">Creative Variations</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES STRIP -->
+  <div id="features-strip">
+    <div class="features-scroll">
+      <div class="feature-item"><span class="feature-icon">&#10024;</span> AI Ad Copywriting</div>
+      <div class="feature-item"><span class="feature-icon">&#127912;</span> Poster Generation</div>
+      <div class="feature-item"><span class="feature-icon">&#128257;</span> Multi-Platform Publishing</div>
+      <div class="feature-item"><span class="feature-icon">&#127919;</span> Audience Targeting</div>
+      <div class="feature-item"><span class="feature-icon">&#128202;</span> Campaign Analytics</div>
+      <div class="feature-item"><span class="feature-icon">&#11015;</span> Asset Export</div>
+      <div class="feature-item"><span class="feature-icon">&#128260;</span> A/B Variations</div>
+      <div class="feature-item"><span class="feature-icon">&#128336;</span> Scheduled Posts</div>
+      <div class="feature-item"><span class="feature-icon">&#10024;</span> AI Ad Copywriting</div>
+      <div class="feature-item"><span class="feature-icon">&#127912;</span> Poster Generation</div>
+      <div class="feature-item"><span class="feature-icon">&#128257;</span> Multi-Platform Publishing</div>
+      <div class="feature-item"><span class="feature-icon">&#127919;</span> Audience Targeting</div>
+      <div class="feature-item"><span class="feature-icon">&#128202;</span> Campaign Analytics</div>
+      <div class="feature-item"><span class="feature-icon">&#11015;</span> Asset Export</div>
+      <div class="feature-item"><span class="feature-icon">&#128260;</span> A/B Variations</div>
+      <div class="feature-item"><span class="feature-icon">&#128336;</span> Scheduled Posts</div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">&#128161; Process</div>
+        <h2 class="section-title">How <span class="gradient-text">AdForge AI</span> Works</h2>
+        <p class="section-subtitle">Three simple steps from product idea to live advertisements across every major platform.</p>
+      </div>
+      <div class="steps-grid reveal">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Describe Your Ad</h3>
+          <p class="step-desc">Chat with the AI agent. Tell it what you're promoting, your target audience, tone, and which platforms to target. No technical skills required.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3 class="step-title">AI Generates Creatives</h3>
+          <p class="step-desc">The agent auto-generates platform-optimized ad copy, headlines, CTAs, hashtags, and visual poster designs for every channel &mdash; in seconds.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Review &amp; Publish</h3>
+          <p class="step-desc">Preview all your creatives, pick your favorites, download the assets, and publish directly to your connected platforms with one click.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI AGENT -->
+  <section id="agent">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">&#129302; AI Agent</div>
+        <h2 class="section-title">Meet Your <span class="gradient-text">Ad Agent</span></h2>
+        <p class="section-subtitle">Describe what you want to advertise in natural language. Your agent handles the rest.</p>
+      </div>
+      <div class="agent-layout reveal">
+        <div class="chat-window">
+          <div class="chat-topbar">
+            <div class="agent-avatar">&#129302;</div>
+            <div style="flex:1;">
+              <div class="agent-name">AdForge Agent</div>
+              <div class="agent-status-row"><div class="status-dot"></div> Online &amp; Ready</div>
+            </div>
+            <div class="chat-controls">
+              <button class="ctrl-btn" id="clearChatBtn" title="Clear Chat">&#128465;</button>
+            </div>
+          </div>
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-area">
+            <div class="chat-suggestions" id="chatSuggestions">
+              <div class="suggestion-chip" onclick="useSuggestion('Pizza delivery app')">&#127829; Pizza delivery app</div>
+              <div class="suggestion-chip" onclick="useSuggestion('Sneaker brand launch')">&#128095; Sneaker brand</div>
+              <div class="suggestion-chip" onclick="useSuggestion('Spa and wellness center')">&#128134; Spa &amp; wellness</div>
+              <div class="suggestion-chip" onclick="useSuggestion('Mobile app startup')">&#128241; Mobile app startup</div>
+            </div>
+            <div class="chat-input-row">
+              <textarea id="chatInput" class="chat-input" placeholder="Describe your product or service..." rows="1" onkeydown="handleKeyDown(event)" oninput="autoGrow(this)"></textarea>
+              <button class="send-btn" id="sendBtn" onclick="sendMessage()">&#10148;</button>
+            </div>
+          </div>
+        </div>
+        <div class="agent-info-panel">
+          <div class="capability-card">
+            <div class="cap-icon violet">&#9999;</div>
+            <div class="cap-title">AI Copywriting</div>
+            <div class="cap-desc">Generates platform-optimized headlines, body copy, CTAs, and hashtags tailored for each social network's best practices and character limits.</div>
+          </div>
+          <div class="capability-card">
+            <div class="cap-icon cyan">&#127912;</div>
+            <div class="cap-title">Visual Poster Studio</div>
+            <div class="cap-desc">Creates stunning poster designs in multiple formats &mdash; square, portrait, landscape &mdash; with auto-generated brand color palettes you can download.</div>
+          </div>
+          <div class="capability-card">
+            <div class="cap-icon pink">&#128640;</div>
+            <div class="cap-title">Multi-Platform Publishing</div>
+            <div class="cap-desc">One-click publishing to Instagram, Facebook, Twitter/X, LinkedIn, and Google Ads. Saves your campaign history for easy re-publishing.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AD RESULTS -->
+  <section id="results">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">&#127912; Generated Ads</div>
+        <h2 class="section-title">Your <span class="gradient-text">Ad Creatives</span></h2>
+        <p class="section-subtitle" id="resultsSubtitle">Platform-optimized ads ready to publish.</p>
+      </div>
+      <div class="platform-tabs" id="platformTabs"></div>
+      <div id="platformTabPanels"></div>
+    </div>
+  </section>
+
+  <!-- POSTER STUDIO -->
+  <section id="poster-studio">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">&#128444; Poster Studio</div>
+        <h2 class="section-title">Visual <span class="gradient-text">Poster Designs</span></h2>
+        <p class="section-subtitle">Download print-ready poster assets for your campaign.</p>
+      </div>
+      <div class="poster-grid" id="posterGrid"></div>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="history">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-tag">&#128337; History</div>
+        <h2 class="section-title">Campaign <span class="gradient-text">History</span></h2>
+        <p class="section-subtitle">Your saved campaigns. Click any to reload and re-publish.</p>
+      </div>
+      <div id="historyContainer" class="reveal"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-text">Built with &#9889; by <span>AdForge AI</span> &mdash; Powering the future of advertising automation.</div>
+    </div>
+  </footer>
+
+  <!-- GENERATING OVERLAY -->
+  <div class="generating-overlay" id="generatingOverlay">
+    <div class="gen-spinner"></div>
+    <div class="gen-text">&#10024; AdForge is creating your ads...</div>
+    <div class="gen-subtext">This usually takes just a few seconds.</div>
+    <div class="gen-steps" id="genSteps"></div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // ──────────────────────────────────────────
+    // INIT
+    // ──────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      initChat();
+      loadHistory();
+      initScrollReveal();
+    });
+
+    function initScrollReveal() {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+      }, { threshold: 0.12 });
+      document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    }
+
+    // ──────────────────────────────────────────
+    // CHAT ENGINE
+    // ──────────────────────────────────────────
+    let chatHistory = [];
+    let isGenerating = false;
+    let currentCampaign = null;
+    let userMsgCount = 0;
+
+    function initChat() {
+      document.getElementById('chatMessages').innerHTML = '';
+      chatHistory = [];
+      userMsgCount = 0;
+      appendMessage('agent',
+        "&#129302; Hi! I'm your <strong>AdForge AI Agent</strong>. I can create complete ad campaigns across Instagram, Facebook, Twitter, LinkedIn, and Google Ads.<br/><br/>" +
+        "Tell me about what you'd like to advertise &mdash; your product, service, or brand!",
+        false
+      );
+    }
+
+    function appendMessage(role, html, animate = true) {
+      const container = document.getElementById('chatMessages');
+      const time = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+      const div = document.createElement('div');
+      div.className = 'message ' + role;
+      if (!animate) div.style.animation = 'none';
+      div.innerHTML =
+        '<div class="msg-avatar ' + (role === 'agent' ? 'agent-av' : 'user-av') + '">' +
+          (role === 'agent' ? '&#129302;' : '&#128100;') +
+        '</div>' +
+        '<div>' +
+          '<div class="msg-bubble">' + html + '</div>' +
+          '<div class="msg-time">' + time + '</div>' +
+        '</div>';
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+      chatHistory.push({ role, html });
+    }
+
+    function showTyping() {
+      const c = document.getElementById('chatMessages');
+      const d = document.createElement('div');
+      d.className = 'message agent'; d.id = 'typingIndicator';
+      d.innerHTML = '<div class="msg-avatar agent-av">&#129302;</div>' +
+        '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+      c.appendChild(d);
+      c.scrollTop = c.scrollHeight;
+    }
+
+    function removeTyping() {
+      const el = document.getElementById('typingIndicator');
+      if (el) el.remove();
+    }
+
+    function autoGrow(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    }
+
+    function handleKeyDown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    }
+
+    function useSuggestion(text) {
+      document.getElementById('chatInput').value = 'Advertise my ' + text;
+      sendMessage();
+    }
+
+    async function sendMessage() {
+      if (isGenerating) return;
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = ''; input.style.height = 'auto';
+      document.getElementById('chatSuggestions').style.display = 'none';
+      appendMessage('user', escHtml(text));
+      userMsgCount++;
+      isGenerating = true;
+      showTyping();
+
+      if (userMsgCount === 1 && !currentCampaign) {
+        const product = extractProduct(text);
+        await delay(1300);
+        removeTyping();
+        appendMessage('agent',
+          'Great! I\'ll create a full ad campaign for <strong>"' + escHtml(product) + '"</strong>.<br/><br/>' +
+          'Quick question &mdash; what\'s your primary goal?<br/>' +
+          '&bull; Brand Awareness &nbsp;&bull; Sales / Conversions &nbsp;&bull; App Downloads<br/><br/>' +
+          'Or just say <strong>"Go ahead"</strong> and I\'ll create the campaign now!'
+        );
+        isGenerating = false;
+      } else if (!currentCampaign) {
+        isGenerating = false;
+        const product = extractProduct(chatHistory.filter(m => m.role === 'user')[0]?.html || text);
+        await startCampaignGeneration(product);
+      } else {
+        await delay(900);
+        removeTyping();
+        appendMessage('agent',
+          '&#127881; Campaign already generated! Scroll down to see your ads.<br/>' +
+          'Want a new campaign? Click <strong>Clear Chat</strong> and describe a new product.'
+        );
+        isGenerating = false;
+      }
+    }
+
+    document.getElementById('clearChatBtn').onclick = () => {
+      currentCampaign = null;
+      initChat();
+      document.getElementById('chatSuggestions').style.display = 'flex';
+      document.getElementById('results').classList.remove('visible');
+      document.getElementById('poster-studio').classList.remove('visible');
+    };
+
+    function extractProduct(text) {
+      const clean = text.replace(/^advertise my |^advertise |^create ads for |^promote |^i want to advertise |^help me advertise /i, '');
+      return capitalize(clean.split(/[.,!?]/)[0].trim().slice(0, 40));
+    }
+
+    async function startCampaignGeneration(product) {
+      removeTyping();
+      appendMessage('agent', 'Perfect! Generating your full campaign for <strong>' + escHtml(product) + '</strong>... &#128640;');
+      await delay(500);
+      await showGeneratingOverlay(product);
+    }
+
+    async function showGeneratingOverlay(product) {
+      const overlay = document.getElementById('generatingOverlay');
+      const stepsEl = document.getElementById('genSteps');
+      overlay.classList.add('active');
+      stepsEl.innerHTML = '';
+      const steps = [
+        { text: '&#128269; Analyzing your product...', ms: 800 },
+        { text: '&#9997; Writing ad copy for all platforms...', ms: 1200 },
+        { text: '&#127912; Designing visual posters...', ms: 1000 },
+        { text: '&#128241; Formatting for Instagram & Facebook...', ms: 800 },
+        { text: '&#128038; Formatting for Twitter & LinkedIn...', ms: 700 },
+        { text: '&#128269; Generating Google Ads...', ms: 600 },
+        { text: '&#9989; Campaign complete!', ms: 400 },
+      ];
+      for (const s of steps) {
+        const el = document.createElement('div');
+        el.className = 'gen-step active';
+        el.innerHTML = s.text;
+        stepsEl.appendChild(el);
+        await delay(s.ms);
+        el.classList.replace('active', 'done');
+      }
+      await delay(400);
+      overlay.classList.remove('active');
+      const campaign = generateCampaign(product);
+      currentCampaign = campaign;
+      displayCampaign(campaign);
+      saveCampaignToHistory(campaign);
+      appendMessage('agent',
+        '&#127881; Campaign for <strong>' + escHtml(product) + '</strong> is ready!<br/><br/>' +
+        '&#128202; <strong>' + campaign.ads.length + ' ad variations</strong> across 5 platforms + ' +
+        '<strong>3 poster designs</strong>.<br/><br/>' +
+        'Scroll down to preview, copy, download, and publish! &#128640;'
+      );
+    }
+
+    // ──────────────────────────────────────────
+    // CAMPAIGN DATA
+    // ──────────────────────────────────────────
+    function generateCampaign(product) {
+      const colors = getRandPalette();
+      const emoji = getEmoji(product);
+      const hn = (t) => t;
+      return {
+        id: Date.now(), product, colors, emoji, timestamp: new Date(),
+        ads: [
+          {
+            platform: 'instagram', platformName: 'Instagram', platformColor: '#E1306C',
+            format: 'Square Post', type: 'square',
+            headline: '&#10024; Introducing ' + product,
+            body: 'Transform your everyday experience with ' + product + '. Crafted for those who demand the best.\n\n&#128293; Limited time offer — Don\'t miss out!',
+            cta: 'Shop Now',
+            hashtags: makeHashtags(product),
+          },
+          {
+            platform: 'instagram', platformName: 'Instagram', platformColor: '#C13584',
+            format: 'Story', type: 'portrait',
+            headline: emoji + ' ' + product,
+            body: 'Swipe up to discover why everyone is talking about ' + product + '. Your life upgrade starts here.',
+            cta: 'Swipe Up',
+            hashtags: makeHashtags(product),
+          },
+          {
+            platform: 'facebook', platformName: 'Facebook', platformColor: '#1877F2',
+            format: 'Feed Post', type: 'landscape',
+            headline: 'Discover ' + product + ' — The Future Is Here',
+            body: 'Are you still doing it the old way? ' + product + ' changes everything. Join thousands of happy customers.\n\n&#128073; Click to learn more.',
+            cta: 'Learn More',
+            hashtags: makeHashtags(product),
+          },
+          {
+            platform: 'twitter', platformName: 'Twitter / X', platformColor: '#14171A',
+            format: 'Tweet', type: 'square',
+            headline: product + ' just dropped &#128640;',
+            body: 'We built ' + product + ' for people who refuse to settle. Early adopters get 20% off — today only.\n\nThread below &#128071;',
+            cta: 'See Thread',
+            hashtags: ['#' + product.replace(/\s+/g,''), '#NewLaunch', '#MustHave'],
+          },
+          {
+            platform: 'linkedin', platformName: 'LinkedIn', platformColor: '#0A66C2',
+            format: 'Professional Post', type: 'landscape',
+            headline: 'Why ' + product + ' Is Transforming the Industry',
+            body: 'In today\'s competitive landscape, businesses adopting ' + product + ' are seeing 3x better results.\n\nHere\'s what industry leaders are saying...',
+            cta: 'Read More',
+            hashtags: ['#' + product.replace(/\s+/g,''), '#Innovation', '#BusinessGrowth'],
+          },
+          {
+            platform: 'google', platformName: 'Google Ads', platformColor: '#4285F4',
+            format: 'Search Ad', type: 'text',
+            headline: product + ' | Official Site',
+            body: 'Get the best ' + product + ' online. Fast delivery, easy returns, 100% satisfaction guaranteed. Save up to 30% today.',
+            cta: 'Visit Site',
+            hashtags: [],
+          },
+        ],
+        posters: [
+          { style: 'Bold Gradient', c1: colors.primary, c2: colors.secondary, light: false },
+          { style: 'Minimal Light', c1: '#f1f5f9', c2: '#e2e8f0', light: true },
+          { style: 'Deep Dark', c1: '#0a0a0f', c2: '#1a1a2e', light: false, accent: colors.primary },
+        ]
+      };
+    }
+
+    function getRandPalette() {
+      const p = [
+        { primary:'#7c3aed', secondary:'#06b6d4' },
+        { primary:'#ec4899', secondary:'#f59e0b' },
+        { primary:'#10b981', secondary:'#06b6d4' },
+        { primary:'#f97316', secondary:'#eab308' },
+        { primary:'#8b5cf6', secondary:'#ec4899' },
+        { primary:'#0ea5e9', secondary:'#10b981' },
+      ];
+      return p[Math.floor(Math.random() * p.length)];
+    }
+
+    function getEmoji(p) {
+      p = p.toLowerCase();
+      if (/pizza|food|eat|restaurant|cafe|coffee/.test(p)) return '&#127829;';
+      if (/shoe|sneaker|fashion|cloth|wear/.test(p)) return '&#128095;';
+      if (/spa|wellness|beauty|salon|gym|fit/.test(p)) return '&#128134;';
+      if (/app|software|tech|digital|ai|saas/.test(p)) return '&#128241;';
+      if (/car|auto|vehicle|drive/.test(p)) return '&#128663;';
+      if (/book|learn|edu|course|school/.test(p)) return '&#128218;';
+      if (/travel|hotel|trip|vacation/.test(p)) return '&#9992;';
+      return '&#10024;';
+    }
+
+    function makeHashtags(p) {
+      const c = p.replace(/\s+/g,'');
+      return ['#'+c, '#NewLaunch', '#MustHave', '#Trending'];
+    }
+
+    function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+    function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    // ──────────────────────────────────────────
+    // DISPLAY CAMPAIGN
+    // ──────────────────────────────────────────
+    function displayCampaign(campaign) {
+      document.getElementById('results').classList.add('visible');
+      document.getElementById('poster-studio').classList.add('visible');
+      document.getElementById('resultsSubtitle').textContent =
+        'Generated ' + campaign.ads.length + ' ad creatives for "' + campaign.product + '" across 5 platforms.';
+      buildPlatformTabs(campaign);
+      buildPosterStudio(campaign);
+      setTimeout(() => document.getElementById('results').scrollIntoView({ behavior:'smooth', block:'start' }), 500);
+    }
+
+    const PTABS = [
+      { id:'all',       name:'All Platforms',  e:'&#9776;' },
+      { id:'instagram', name:'Instagram',       e:'&#128247;' },
+      { id:'facebook',  name:'Facebook',        e:'&#128077;' },
+      { id:'twitter',   name:'Twitter / X',     e:'&#128038;' },
+      { id:'linkedin',  name:'LinkedIn',        e:'&#128188;' },
+      { id:'google',    name:'Google Ads',      e:'&#128269;' },
+    ];
+
+    function buildPlatformTabs(campaign) {
+      const tabsEl   = document.getElementById('platformTabs');
+      const panelsEl = document.getElementById('platformTabPanels');
+      tabsEl.innerHTML = panelsEl.innerHTML = '';
+
+      PTABS.forEach((p, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+        btn.id = 'tab-' + p.id;
+        btn.innerHTML = p.e + ' ' + p.name;
+        btn.onclick = () => switchTab(p.id);
+        tabsEl.appendChild(btn);
+
+        const panel = document.createElement('div');
+        panel.className = 'tab-panel ads-grid' + (i === 0 ? ' active' : '');
+        panel.id = 'panel-' + p.id;
+        const ads = p.id === 'all' ? campaign.ads : campaign.ads.filter(a => a.platform === p.id);
+        ads.forEach(ad => panel.appendChild(buildAdCard(ad, campaign)));
+        panelsEl.appendChild(panel);
+      });
+    }
+
+    function switchTab(id) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      document.getElementById('panel-' + id).classList.add('active');
+    }
+
+    function buildAdCard(ad, campaign) {
+      const card = document.createElement('div');
+      card.className = 'ad-card';
+      const aspClass = ad.type === 'landscape' ? 'landscape' : ad.type === 'portrait' ? 'portrait' : '';
+      const uid = Math.random().toString(36).slice(2,7);
+
+      let posterHtml;
+      if (ad.type !== 'text') {
+        posterHtml = '<div class="ad-poster ' + aspClass + '"><canvas id="adc-' + uid + '"></canvas></div>';
+      } else {
+        posterHtml = '<div style="padding:20px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);">' +
+          '<div style="font-size:11px;color:#4285F4;font-weight:600;margin-bottom:4px;">Ad &middot; ' + escHtml(campaign.product.toLowerCase().replace(/\s+/g,'')) + '.com</div>' +
+          '<div style="font-size:18px;font-weight:700;color:#8ab4f8;margin-bottom:8px;">' + ad.headline + '</div>' +
+          '<div style="font-size:13px;color:#bdc1c6;line-height:1.6;">' + ad.body.replace(/\n/g,'<br/>') + '</div>' +
+          '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">' +
+            ['Shop Now','Free Shipping','Best Deals'].map(l => '<span style="font-size:12px;color:#4285F4;border:1px solid #4285F422;padding:4px 10px;border-radius:50px;">' + l + '</span>').join('') +
+          '</div></div>';
+      }
+
+      const hashHtml = ad.hashtags.length
+        ? '<div style="margin-top:8px;font-size:12px;color:var(--violet-light);">' + ad.hashtags.join(' ') + '</div>'
+        : '';
+
+      card.innerHTML =
+        '<div class="ad-card-header">' +
+          '<div class="platform-label">' +
+            '<div class="platform-icon" style="background:' + ad.platformColor + '22;color:' + ad.platformColor + ';">' + getPlatEmoji(ad.platformName) + '</div>' +
+            escHtml(ad.platformName) +
+          '</div>' +
+          '<span class="ad-format-badge">' + escHtml(ad.format) + '</span>' +
+        '</div>' +
+        posterHtml +
+        '<div class="ad-copy-section">' +
+          '<div class="ad-headline">' + ad.headline + '</div>' +
+          '<div class="ad-body">' + ad.body.replace(/\n/g,'<br/>') + '</div>' +
+          hashHtml +
+          '<div style="margin-top:12px;"><div class="ad-cta-badge">&rarr; ' + escHtml(ad.cta) + '</div></div>' +
+        '</div>' +
+        '<div class="ad-card-actions">' +
+          '<button class="action-btn" onclick="doCopy(this)">&#128203; Copy</button>' +
+          '<button class="action-btn" onclick="showToast(\'success\',\'&#11015; Download ready!\')">&#11015; Download</button>' +
+          '<button class="action-btn publish" onclick="doPublish(this,\'' + escHtml(ad.platformName) + '\')">&#128640; Publish</button>' +
+        '</div>';
+
+      // Attach copy data
+      card.querySelector('.action-btn').dataset.copy =
+        ad.headline.replace(/&#\d+;/g,'') + '\n\n' + ad.body.replace(/&#\d+;/g,'').replace(/\n/g,'\n') + '\n\n' + ad.hashtags.join(' ');
+
+      if (ad.type !== 'text') {
+        setTimeout(() => {
+          const cv = document.getElementById('adc-' + uid);
+          if (cv) drawPoster(cv, ad, campaign);
+        }, 150);
+      }
+      return card;
+    }
+
+    function getPlatEmoji(n) {
+      return { 'Instagram':'&#128247;', 'Facebook':'&#128077;', 'Twitter / X':'&#128038;', 'LinkedIn':'&#128188;', 'Google Ads':'&#128269;' }[n] || '&#128241;';
+    }
+
+    // ──────────────────────────────────────────
+    // CANVAS DRAWING
+    // ──────────────────────────────────────────
+    function drawPoster(canvas, ad, campaign) {
+      const par = canvas.parentElement;
+      const W = par.offsetWidth || 400, H = par.offsetHeight || 400;
+      canvas.width = W * 2; canvas.height = H * 2;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(2, 2);
+
+      // BG gradient from platform color
+      const hexToRgba = (hex, a) => {
+        const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+        return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+      };
+      const col = (ad.platformColor && ad.platformColor.startsWith('#') && ad.platformColor.length >= 7)
+        ? ad.platformColor : '#7c3aed';
+      const bg = ctx.createLinearGradient(0, 0, W, H);
+      bg.addColorStop(0, hexToRgba(col, 0.9));
+      bg.addColorStop(1, hexToRgba(col.length === 7 ? col : '#7c3aed', 0.4));
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+      // Decorative circles
+      ctx.globalAlpha = 0.18; ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.arc(W * 1.1, H * -0.1, H * 0.65, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(W * -0.05, H * 1.1, H * 0.45, 0, Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Grid pattern
+      ctx.globalAlpha = 0.06; ctx.strokeStyle = '#fff'; ctx.lineWidth = 0.8;
+      for (let x = 0; x < W; x += 28) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+      ctx.globalAlpha = 1;
+
+      // Brand chip
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      rRect(ctx, 14, 12, 116, 24, 12); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 11px sans-serif'; ctx.textBaseline = 'middle';
+      ctx.fillText('\u26a1 AdForge AI', 24, 24);
+
+      // Headline
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold ' + Math.max(14, Math.min(20, W/13)) + 'px sans-serif';
+      ctx.textBaseline = 'top';
+      const hl = ad.headline.replace(/&#[0-9]+;/g, '').replace(/&[a-z]+;/g, ' ').trim();
+      wrapTxt(ctx, hl, 14, H * 0.34, W - 28, Math.max(18, Math.min(26, W/9)));
+
+      // Sub text
+      ctx.globalAlpha = 0.82; ctx.font = Math.max(10,Math.min(12,W/24)) + 'px sans-serif';
+      const sub = ad.body.split('\n')[0].replace(/&#[0-9]+;/g,'').replace(/&[a-z]+;/g,' ').slice(0,60);
+      wrapTxt(ctx, sub, 14, H * 0.57, W - 28, 16);
+      ctx.globalAlpha = 1;
+
+      // CTA button
+      const cW = Math.min(120, W-28), cH = 30, cX = 14, cY = H - cH - 14;
+      ctx.fillStyle = '#fff'; rRect(ctx, cX, cY, cW, cH, 15); ctx.fill();
+      ctx.fillStyle = hexToRgba(col, 0.8);
+      ctx.font = 'bold 12px sans-serif'; ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+      ctx.fillText(ad.cta + ' \u2192', cX + cW/2, cY + cH/2);
+      ctx.textAlign = 'left';
+
+      // Platform badge
+      ctx.globalAlpha = 0.6; ctx.fillStyle = 'rgba(255,255,255,0.12)';
+      rRect(ctx, W-88, H-32, 74, 20, 10); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = '9px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(ad.platformName, W-51, H-22);
+      ctx.textAlign = 'left'; ctx.globalAlpha = 1;
+    }
+
+    function rRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x+r, y);
+      ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+      ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+      ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+      ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y);
+      ctx.closePath();
+    }
+
+    function wrapTxt(ctx, text, x, y, maxW, lh) {
+      const words = text.split(' ');
+      let line = '', ty = y;
+      for (const w of words) {
+        const t = line + w + ' ';
+        if (ctx.measureText(t).width > maxW && line) { ctx.fillText(line.trim(), x, ty); line = w + ' '; ty += lh; }
+        else { line = t; }
+      }
+      if (line.trim()) ctx.fillText(line.trim(), x, ty);
+    }
+
+    // ──────────────────────────────────────────
+    // POSTER STUDIO
+    // ──────────────────────────────────────────
+    function buildPosterStudio(campaign) {
+      const grid = document.getElementById('posterGrid');
+      grid.innerHTML = '';
+      campaign.posters.forEach((st, i) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'poster-wrapper';
+        wrap.innerHTML =
+          '<div class="poster-canvas-wrap"><canvas id="pstr-' + i + '"></canvas></div>' +
+          '<div class="poster-footer">' +
+            '<span class="poster-label">' + escHtml(st.style) + '</span>' +
+            '<button class="download-btn" onclick="dlPoster(\'pstr-' + i + '\',\'' + escHtml(campaign.product + '-' + st.style) + '\')">&#11015; Download</button>' +
+          '</div>';
+        grid.appendChild(wrap);
+        setTimeout(() => drawPosterDesign(document.getElementById('pstr-' + i), campaign, st, i), 200 + i * 120);
+      });
+    }
+
+    function drawPosterDesign(canvas, campaign, st, variant) {
+      if (!canvas) return;
+      const par = canvas.parentElement;
+      const S = par.offsetWidth || 300;
+      canvas.width = S*2; canvas.height = S*2;
+      canvas.style.width = S+'px'; canvas.style.height = S+'px';
+      const ctx = canvas.getContext('2d');
+      ctx.scale(2,2);
+
+      // BG
+      const g = ctx.createLinearGradient(0,0,S,S);
+      g.addColorStop(0, st.c1); g.addColorStop(1, st.c2);
+      ctx.fillStyle = g; ctx.fillRect(0,0,S,S);
+
+      // Decoration
+      if (variant === 0) {
+        ctx.globalAlpha = 0.18; ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(S*.85, S*.12, S*.38, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(S*.1, S*.88, S*.22, 0, Math.PI*2); ctx.fill();
+        ctx.globalAlpha = 1;
+      } else if (variant === 2 && st.accent) {
+        const gw = ctx.createRadialGradient(S*.7, S*.3, 0, S*.7, S*.3, S*.4);
+        gw.addColorStop(0, st.accent + '55'); gw.addColorStop(1, 'transparent');
+        ctx.fillStyle = gw; ctx.fillRect(0,0,S,S);
+      } else if (variant === 1) {
+        ctx.globalAlpha = 0.07; ctx.strokeStyle = '#334155'; ctx.lineWidth = 1;
+        for (let x=0; x<S; x+=20) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,S); ctx.stroke(); }
+        ctx.globalAlpha = 1;
+      }
+
+      const tc = st.light ? '#1e293b' : '#ffffff';
+      const mc = st.light ? '#64748b' : 'rgba(255,255,255,0.75)';
+
+      // Brand
+      ctx.fillStyle = tc; ctx.font = 'bold ' + (S*.038) + 'px sans-serif'; ctx.textBaseline = 'top';
+      ctx.fillText('\u26a1 ADFORGE AI', S*.06, S*.06);
+
+      // Divider
+      ctx.strokeStyle = st.light ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.22)';
+      ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(S*.06, S*.14); ctx.lineTo(S*.94, S*.14); ctx.stroke();
+
+      // Product name
+      ctx.fillStyle = tc;
+      ctx.font = 'bold ' + (S*.096) + 'px sans-serif'; ctx.textBaseline = 'middle';
+      const nm = campaign.product.length > 13 ? campaign.product.slice(0,13)+'...' : campaign.product;
+      ctx.fillText(nm, S*.06, S*.38);
+
+      // Tagline
+      ctx.fillStyle = mc; ctx.font = (S*.042) + 'px sans-serif';
+      ctx.fillText('The Next Level Experience', S*.06, S*.52);
+
+      // CTA
+      const bY = S*.65, bH = S*.098, bW = S*.52;
+      ctx.fillStyle = st.light ? '#7c3aed' : 'rgba(255,255,255,0.92)';
+      rRect(ctx, S*.06, bY, bW, bH, bH/2); ctx.fill();
+      ctx.fillStyle = st.light ? '#fff' : '#7c3aed';
+      ctx.font = 'bold ' + (S*.042) + 'px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('Get Started \u2192', S*.06 + bW/2, bY + bH/2);
+      ctx.textAlign = 'left';
+
+      // URL
+      ctx.globalAlpha = 0.5; ctx.fillStyle = tc;
+      ctx.font = (S*.03) + 'px sans-serif'; ctx.textBaseline = 'bottom';
+      ctx.fillText('www.adforgeai.com', S*.06, S*.93);
+      ctx.globalAlpha = 1;
+
+      // Emoji
+      ctx.font = (S*.11) + 'px serif';
+      ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+      ctx.fillText('\u2728', S*.94, S*.93);
+      ctx.textAlign = 'left';
+    }
+
+    function dlPoster(id, name) {
+      const cv = document.getElementById(id);
+      if (!cv) return;
+      const a = document.createElement('a');
+      a.download = name.replace(/\s+/g,'-') + '-poster.png';
+      a.href = cv.toDataURL('image/png'); a.click();
+      showToast('success', '&#10003; Downloading poster...');
+    }
+
+    // ──────────────────────────────────────────
+    // AD ACTIONS
+    // ──────────────────────────────────────────
+    function doCopy(btn) {
+      const text = btn.closest('.ad-card').querySelector('.action-btn').dataset.copy || '';
+      navigator.clipboard.writeText(text)
+        .then(() => showToast('success', '&#10003; Ad copy copied!'))
+        .catch(() => showToast('info', 'Copy manually from the card.'));
+    }
+
+    function doPublish(btn, platform) {
+      btn.textContent = '&#9203; Publishing...'; btn.disabled = true;
+      setTimeout(() => {
+        btn.innerHTML = '&#10003; Published!';
+        btn.style.cssText += ';background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.4);color:var(--green);';
+        showToast('success', '&#10003; Ad published to ' + platform + '!');
+      }, 1800);
+    }
+
+    // ──────────────────────────────────────────
+    // HISTORY
+    // ──────────────────────────────────────────
+    function saveCampaignToHistory(campaign) {
+      const h = JSON.parse(localStorage.getItem('adforge_hist') || '[]');
+      h.unshift({ id: campaign.id, product: campaign.product, emoji: campaign.emoji, platforms: [...new Set(campaign.ads.map(a=>a.platformName))], timestamp: campaign.timestamp, count: campaign.ads.length });
+      if (h.length > 20) h.pop();
+      localStorage.setItem('adforge_hist', JSON.stringify(h));
+      loadHistory();
+    }
+
+    function loadHistory() {
+      const el = document.getElementById('historyContainer');
+      const h = JSON.parse(localStorage.getItem('adforge_hist') || '[]');
+      if (!h.length) {
+        el.innerHTML = '<div class="history-empty"><div style="font-size:48px;opacity:0.3;margin-bottom:16px;">&#128221;</div><p style="font-size:16px;font-weight:600;margin-bottom:8px;">No campaigns yet</p><p style="font-size:14px;">Create your first campaign using the AI Agent above!</p></div>';
+        return;
+      }
+      el.innerHTML = '<div class="history-grid">' + h.map(c => {
+        const d = new Date(c.timestamp);
+        const ts = d.toLocaleDateString('en-US', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+        const plats = (c.platforms||[]).map(p=>'<div class="platform-mini">' + getPlatEmoji(p) + ' ' + escHtml(p) + '</div>').join('');
+        return '<div class="history-card"><div class="history-card-top"><div class="campaign-title">&#10024; ' + escHtml(c.product) + '</div><div class="campaign-time">' + ts + '</div></div><div class="campaign-platforms">' + plats + '</div><div style="margin-top:10px;font-size:12px;color:var(--text-muted);">' + (c.count||6) + ' ad variations</div><button class="campaign-reload" onclick="reloadCamp(\'' + escHtml(c.product).replace(/'/g,"&#39;") + '\')">&#128260; Reload Campaign</button></div>';
+      }).join('') + '</div>';
+    }
+
+    function reloadCamp(product) {
+      const c = generateCampaign(capitalize(product));
+      currentCampaign = c;
+      displayCampaign(c);
+      showToast('success', '&#10003; Reloaded "' + product + '"');
+    }
+
+    // ──────────────────────────────────────────
+    // TOAST
+    // ──────────────────────────────────────────
+    function showToast(type, msg) {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = 'toast ' + type; t.innerHTML = msg;
+      c.appendChild(t);
+      setTimeout(() => { t.style.animation = 'toastOut 0.3s ease forwards'; setTimeout(()=>t.remove(), 300); }, 3000);
+    }
+
+    // ──────────────────────────────────────────
+    // NAVBAR SCROLL
+    // ──────────────────────────────────────────
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').style.background =
+        window.scrollY > 50 ? 'rgba(5,5,13,0.95)' : 'rgba(5,5,13,0.7)';
+    });
+  </script>
+</body>
+</html>
